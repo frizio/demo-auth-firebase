@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 import { AngularFireAuth } from 'angularfire2/auth';
 import { auth } from 'firebase';
+import { AngularFireDatabase } from 'angularfire2/database';
 
 
 @Injectable({
@@ -22,10 +23,21 @@ export class UserService {
       }
     })
   );
-  isAdmin = of(true);
+
+  //isAdmin = of(true);
+  isAdmin: Observable<boolean> = this.uid.pipe(
+    switchMap(uid => {
+      if (uid) {
+        return this.db.object<boolean>('/admin/' + uid).valueChanges();
+      } else {
+        return of(false);
+      }
+    })
+  );
 
   constructor(
-    private authenticator: AngularFireAuth
+    private authenticator: AngularFireAuth,
+    private db: AngularFireDatabase
   ) { }
 
   login() {
