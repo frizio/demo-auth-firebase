@@ -3,3 +3,13 @@
   <h1>Demo authentication with Firebase</h1>
 </div>
 
+<div *ngIf="user.uid | async as uid; else login">
+  The user is loggedin {{uid}}
+  <div *ngIf="user.isAdmin | async">The user is an Administrator</div>
+  <button>Logout</button>
+</div>
+
+<ng-template #login>
+  <h4>Login required!!</h4>
+  <button>Login</button>
+</ng-template>
